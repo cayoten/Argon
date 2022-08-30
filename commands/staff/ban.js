@@ -1,5 +1,5 @@
-const {SlashCommandBuilder} = require("@discordjs/builders");
-const {Permissions} = require("discord.js");
+const {SlashCommandBuilder} = require("discord.js");
+const {PermissionsBitField} = require("discord.js")
 const ms = require("ms");
 
 module.exports = {
@@ -28,7 +28,7 @@ module.exports = {
     async execute(interaction) {
 
         //Permission check
-        if (!interaction.member.permissions.has([Permissions.FLAGS.BAN_MEMBERS])) {
+        if (!interaction.member.permissions.has([PermissionsBitField.Flags.BanMembers])) {
             return interaction.reply({
                 content: "You do not have permission to use this command!",
                 ephemeral: true

@@ -1,5 +1,5 @@
-const {SlashCommandBuilder} = require("@discordjs/builders");
-const {Permissions} = require("discord.js");
+const {SlashCommandBuilder} = require("discord.js");
+const {PermissionsBitField} = require("discord.js");
 const utils = require("../../lib/utils.js")
 
 const ms = require("ms");
@@ -25,11 +25,11 @@ module.exports = {
     async execute(interaction) {
 
         //Check if they're able to use the command
-        if (!utils.checkPermissionAndNotify(interaction.member, interaction, Permissions.FLAGS.MANAGE_MESSAGES))
+        if (!utils.checkPermissionAndNotify(interaction.member, interaction, PermissionsBitField.Flags.ManageMessages))
             return;
 
         //Check if they're staff
-        if (interaction.options.getMember("user").permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) {
+        if (interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
 
             //If they're staff, return & reply
             return interaction.reply({

@@ -1,15 +1,17 @@
 require("dotenv").config();
 const fs = require("fs");
 
-const {Client, Intents, Collection} = require("discord.js");
+const {Client, GatewayIntentBits, Collection} = require("discord.js");
 
 
 const client = new Client({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MEMBERS
-    ]
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+    ],
+    // partials: [] - We got none! If so, define "Partials" in require discord.js
 });
 
 //3rd attempt at a sufficient data storage solution... shoot me
