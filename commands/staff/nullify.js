@@ -69,7 +69,7 @@ module.exports = {
         //    users.set(`${user.id}`, {punishCheck: []});
         //}
 
-        //Set the value to remove a strike from, first entry is 0, second is 1, etc
+        //Set the value to remove a strike from, first entry is 0, second is 1, etc.
         //let strikeValue = interaction.options.getInteger("value");
 
         //Define the content inside punishes

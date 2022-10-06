@@ -3,7 +3,7 @@ const {SlashCommandBuilder} = require("discord.js");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("parrot")
-        .setDescription("Repeats what you tell me to say")
+        .setDescription("I'll repeat to you what you tell me!")
         .addStringOption(option =>
             option
                 .setName("message")
@@ -14,7 +14,7 @@ module.exports = {
 
         //Reply with what the user said
         interaction.reply({
-            content: interaction.options.getString("message"),
+            content: "*I repeat back to you:* " + interaction.options.getString("message"),
             ephemeral: true
         })
     }
