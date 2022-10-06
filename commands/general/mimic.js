@@ -12,6 +12,7 @@ module.exports = {
         ),
     async execute(interaction) {
 
+        //Check if they can use the command
         if (!interaction.member.permissions.has([PermissionsBitField.Flags.ManageMessages])) {
             return interaction.reply({
                 content: "You do not have permission to use this command!",

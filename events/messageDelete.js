@@ -1,8 +1,7 @@
-const Discord = require("discord.js");
+const {EmbedBuilder} = require("discord.js");
 
 module.exports = {
     name: "messageDelete",
-    once: true,
     async execute(message) {
 
         //If the content was from a bot, ignore it
@@ -20,7 +19,7 @@ module.exports = {
         }
 
         //Configure the embed, clarifying the content OR setting it to "<media>" if it wasn't a text object
-        let cLog = new Discord.MessageEmbed()
+        let cLog = new EmbedBuilder()
             .setColor("#e82631")
             .setTitle("Removed Message")
             .setDescription(`|| ${message.content.trim() === '' ? "<media>" : message.content} ||`);
@@ -28,7 +27,7 @@ module.exports = {
         //Get the URL for any media attached and add it to the embed
         let urls = [...message.attachments.values()];
         for (let i = 0; i < urls.length; i++) {
-            cLog.addField("Attachments", urls[i].proxyURL)
+            cLog.addFields("Attachments", urls[i].proxyURL)
         }
 
         //Finally, log this!
