@@ -1,4 +1,4 @@
-const Discord = require("discord.js");
+const {EmbedBuilder} = require("discord.js");
 
 module.exports = {
     name: "messageUpdate",
@@ -22,7 +22,7 @@ module.exports = {
         }
 
         //Assemble the logging
-        let cLog = new Discord.MessageEmbed()
+        let cLog = new EmbedBuilder()
             .setColor("#e8a726")
             .setTitle("Edited Message")
             .setDescription(`**From:** || ${oldMessage.content.trim() === '' ? "<media>" : oldMessage.content} || \n **To:** || ${newMessage.content} ||`);
@@ -30,7 +30,7 @@ module.exports = {
         //Get the URL for any media attached and add it to the embed
         let urls = [...oldMessage.attachments.values()];
         for (let i = 0; i < urls.length; i++) {
-            cLog.addField("Attachments", urls[i].proxyURL)
+            cLog.addFields("Attachments", urls[i].proxyURL)
         }
 
         //Finally, log it!
