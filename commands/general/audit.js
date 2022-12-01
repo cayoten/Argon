@@ -4,7 +4,7 @@ module.exports = {
 
     data: new SlashCommandBuilder()
         .setName("audit")
-        .setDescription("Post every punishment a user has received")
+        .setDescription("Check someone (such as yourself) for punishments")
         .addUserOption(option =>
             option
                 .setName("user")

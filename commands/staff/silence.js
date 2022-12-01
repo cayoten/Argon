@@ -6,6 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("silence")
         .setDescription("Silences a user")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addUserOption(option =>
             option
                 .setName("user")
@@ -26,13 +27,6 @@ module.exports = {
 
     async execute(interaction) {
 
-        if (!interaction.member.permissions.has([PermissionsBitField.Flags.ManageMessages])) {
-            return interaction.reply({
-                content: "You do not have permission to use this command!",
-                ephemeral: true
-            })
-        }
-
         let channel;
         try {
             channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
@@ -40,7 +34,7 @@ module.exports = {
 
             //If there isn't a channel in the database, let them know!
             return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setchannel!",
+                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
                 ephemeral: true
             })
         }

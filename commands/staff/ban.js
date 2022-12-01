@@ -6,6 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("ban")
         .setDescription("Bans a user")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.BanMembers)
         .addUserOption(option =>
             option
                 .setName("user")
@@ -26,25 +27,16 @@ module.exports = {
 
     async execute(interaction) {
 
-        //Permission check
-        if (!interaction.member.permissions.has([PermissionsBitField.Flags.BanMembers])) {
-            return interaction.reply({
-                content: "You do not have permission to use this command!",
-                ephemeral: true
-            })
-        }
-
-
         //Set up the guild & channel, defined in setChannel
-        // let guilds = new db.table("guilds")
         let channel;
+
         try {
             channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
         } catch (e) {
 
             //If there isn't a channel in the database, let them know!
             return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setchannel!",
+                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
                 ephemeral: true
             })
         }
@@ -59,21 +51,8 @@ module.exports = {
             //Oh, no! We can't ban them. Well, nothing to log, just simply can't dm them!
         }
 
-        //Set up the table
-        // const users = new db.table("users");
-
-        //Check if they have a table in their ID, if not, make one
-        // if (!users.has(`${user.id}`)) {
-        //     users.set(`${user.id}`, {punishCheck: []});
-        // }
-
-        //Push the new ban to the database
-        // users.push(`${user.id}.punishCheck`, `BAN: ${reason}`);
-
-        //Log to the channel that a ban has occurred
 
         //If the ban is NOT permanent, do this first
-
         if (interaction.options.getString("time") !== "perm") {
 
             interaction.client.dataStorage.addUserBan(interaction.options.getUser("user").id, interaction.guild.id, ms(interaction.options.getString("time")));
@@ -81,6 +60,7 @@ module.exports = {
         }
 
 
+        //Log the ban
         await channel.send({content: `:hammer: **${interaction.user.tag}** has performed action: \`ban\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Time:\` ${interaction.options.getString("time")} \n\`Reason:\` ${reason}`});
 
         //Actually ban the user

@@ -1,5 +1,4 @@
 const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
-const utils = require("../../lib/utils.js")
 
 const ms = require("ms");
 
@@ -8,6 +7,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("strike")
         .setDescription("Strikes a user with a set reason")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addUserOption(option =>
             option
                 .setName("user")
@@ -23,10 +23,6 @@ module.exports = {
 
     async execute(interaction) {
 
-        //Check if they're able to use the command
-        if (!utils.checkPermissionAndNotify(interaction.member, interaction, PermissionsBitField.Flags.ManageMessages))
-            return;
-
         //Check if they're staff
         if (interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
 
@@ -39,14 +35,6 @@ module.exports = {
 
         //Define user
         let user = interaction.options.getUser("user");
-
-        //Create the users DB and define "user"
-        // const users = new db.table("users");
-        //
-        //Give them their own table if they don't hav eone
-        // if (!users.has(`${user.id}`)) {
-        //     users.set(`${user.id}`, {punishCheck: []});
-        // }
 
         //Define what strikes is
         let strikes = interaction.client.dataStorage.strikes;
@@ -64,9 +52,9 @@ module.exports = {
             modChannel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
         } catch (e) {
 
-        //Do nothing if there isn't a channel
+            //Do nothing if there isn't a channel
             return interaction.reply({
-                content: `Interaction FAILED due to reason: \`No logging channel\``,
+                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
                 ephemeral: true
             });
 

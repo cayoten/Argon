@@ -4,6 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("nullify")
         .setDescription("Removes a punishment")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
         .addUserOption(option =>
             option
                 .setName("user")
@@ -17,14 +18,6 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-
-        //Permission check
-        if (!interaction.member.permissions.has([PermissionsBitField.Flags.ManageGuild])) {
-            return interaction.reply({
-                content: "You do not have permission to use this command!",
-                ephemeral: true
-            })
-        }
 
         //Define user
         let user = interaction.options.getUser("user")
@@ -46,6 +39,20 @@ module.exports = {
             })
         }
 
+        //Set up the guild & channel, defined in setChannel
+        let channel;
+
+        try {
+            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
+        } catch (e) {
+
+            //If there isn't a channel in the database, let them know!
+            return interaction.reply({
+                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
+                ephemeral: true
+            })
+        }
+
         //Define strikeValue for next line
         let strikeValue = interaction.options.getInteger("value")
 
@@ -61,33 +68,9 @@ module.exports = {
 
         interaction.client.dataStorage.saveData()
 
-        //Set up the table
-        //const users = new db.table("users");
+        //Log the ban
+        await channel.send({content: `:coffee: **${interaction.user.tag}** has performed action: \`nullify\` \n\`New Strike Count:\` **${strikes[interaction.guild.id][user.id].length}**`});
 
-        //Check if they have a table in their ID, if not, make one
-        //if (!users.has(`${user.id}`)) {
-        //    users.set(`${user.id}`, {punishCheck: []});
-        //}
-
-        //Set the value to remove a strike from, first entry is 0, second is 1, etc.
-        //let strikeValue = interaction.options.getInteger("value");
-
-        //Define the content inside punishes
-        //let punishes = users.get(`${user.id}.punishCheck`)
-
-        //If they have no strikes, return
-        // if (punishes.length === 0) {
-        //     return interaction.reply({
-        //         content: "This user has a clean slate!",
-        //         ephemeral: true
-        //     });
-        // }
-
-        //Splice the data together
-        // punishes.splice(strikeValue, 1);
-
-        //Apply the new data
-        // users.set(`${user.id}.punishCheck`, punishes);
 
         //Finally, we're done!
         interaction.reply({

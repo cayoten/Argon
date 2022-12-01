@@ -3,8 +3,9 @@ const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("setchannel")
-        .setDescription("Sets the channel for various configurations")
+        .setName("setdata")
+        .setDescription("Sets specific data for certain commands")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
 
         //Join-leave logging
         .addSubcommand(subcommand =>
@@ -37,30 +38,34 @@ module.exports = {
                     option
                         .setName("chat")
                         .setDescription("The channel to set for chat logs")
+                        .setRequired(true)))
+
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('verify-key')
+                .setDescription('Sets the verification key')
+                .addStringOption(option =>
+                    option
+                        .setName("key")
+                        .setDescription("The verification key")
+                        .setRequired(true)))
+
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('member-role')
+                .setDescription('Sets the member role to add for verification')
+                .addRoleOption(option =>
+                    option
+                        .setName("role")
+                        .setDescription("The role")
                         .setRequired(true))),
+
     async execute(interaction) {
-
-
-        // //Define guilds table
-        // const guilds = new db.table("guilds")
-        //
-        // //If there isn't a guilds' table for that specified guild, make one!
-        // if (!guilds.has(`${interaction.guild.id}`)) {
-        //     guilds.set(`${interaction.guild.id}`, {modChannel: [], jlChannel: [], chatChannel: []});
-        // }
-
-        //Permission check
-        if (!interaction.member.permissions.has([PermissionsBitField.Flags.ManageGuild])) {
-            return interaction.reply({
-                content: "You do not have permission to use this command!",
-                ephemeral: true
-            });
-        }
 
         //Define action as subcommands
         const action = interaction.options.getSubcommand();
 
-        //Define channel in serverData.json
+        //Define channel & verify in serverData.json
         let channel = interaction.client.dataStorage.serverData;
 
         //If there isn't a server defined in the DB, make it defined
@@ -83,7 +88,7 @@ module.exports = {
                 // guilds.set(`${interaction.guild.id}.modChannel`, interaction.options.getChannel("moderation").id);
 
                 //Log end result
-                interaction.reply({content: `Set successfully to <#${channel[interaction.guild.id]["modChannel"]}>!`});
+                interaction.reply({content: `Set the moderation logging channel to <#${channel[interaction.guild.id]["modChannel"]}>.`});
 
                 break;
 
@@ -100,7 +105,7 @@ module.exports = {
                 //guilds.set(`${interaction.guild.id}.jlChannel`, interaction.options.getChannel("join-leave").id);
 
                 //Log end result
-                interaction.reply({content: `Set successfully to <#${channel[interaction.guild.id]["jlChannel"]}>!`});
+                interaction.reply({content: `Set the join-leave channel to <#${channel[interaction.guild.id]["jlChannel"]}>.`});
 
                 break;
 
@@ -116,7 +121,36 @@ module.exports = {
                 // guilds.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
 
                 //Log end result
-                interaction.reply({content: `Set successfully to <#${channel[interaction.guild.id]["chatChannel"]}>!`});
+                interaction.reply({content: `Set the chat logging channel to <#${channel[interaction.guild.id]["chatChannel"]}>.`});
+
+                break;
+
+            case "verify-key":
+
+                //Set "modChannel" equal to the channel
+                channel[interaction.guild.id]["verifyKey"] = interaction.options.getString("key");
+
+                //Save the data
+                await interaction.client.dataStorage.saveData();
+
+                //Log end result
+                interaction.reply({content: `Set the server's verification key to \`${channel[interaction.guild.id]["verifyKey"]}\`.`});
+
+                break;
+
+            case "member-role":
+
+                //Set "chatChannel" equal to the channel
+                channel[interaction.guild.id]["memberRole"] = interaction.options.getRole("role").id;
+
+                //Save the data
+                await interaction.client.dataStorage.saveData();
+
+                //Save the channel to the field
+                // guilds.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
+
+                //Log end result
+                interaction.reply({content: `Set the server's member role to \`${channel[interaction.guild.id]["memberRole"]}\`.`});
 
                 break;
         }

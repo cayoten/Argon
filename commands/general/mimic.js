@@ -4,6 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("mimic")
         .setDescription("Says what you tell me to say to the server")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addStringOption(option =>
             option
                 .setName("message")
@@ -11,14 +12,6 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-
-        //Check if they can use the command
-        if (!interaction.member.permissions.has([PermissionsBitField.Flags.ManageMessages])) {
-            return interaction.reply({
-                content: "You do not have permission to use this command!",
-                ephemeral: true
-            })
-        }
 
         //Reply with what the user said
         interaction.reply({

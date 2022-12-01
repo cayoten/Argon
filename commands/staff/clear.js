@@ -4,6 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("clear")
         .setDescription("Clears a specified amount of messages, ignoring pinned ones.")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addIntegerOption(option =>
             option
                 .setName("amount")
@@ -11,14 +12,6 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-
-        //Permission check
-        if (!interaction.member.permissions.has([PermissionsBitField.Flags.ManageMessages])) {
-            return interaction.reply({
-                content: "You do not have permission to use this command!",
-                ephemeral: true
-            })
-        }
 
         //Identify pinned messages
         const pinned = (await interaction.channel.messages.fetch()).filter(msg => !msg.pinned);
@@ -31,7 +24,7 @@ module.exports = {
 
             //If there isn't a channel in the database, let them know!
             return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setchannel!",
+                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
                 ephemeral: true
             })
         }
