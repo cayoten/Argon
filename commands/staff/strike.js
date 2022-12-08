@@ -1,6 +1,5 @@
 const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
 
-const ms = require("ms");
 
 module.exports = {
 
@@ -36,43 +35,36 @@ module.exports = {
         //Define user
         let user = interaction.options.getUser("user");
 
-        //Define what strikes is
-        let strikes = interaction.client.dataStorage.strikes;
-
-        //If strikes DB doesn't exist, make one
-        if (!strikes[interaction.guild.id]) strikes[interaction.guild.id] = {};
-
-        //If strikes for that user doesn't exist, give them an empty array
-        if (!strikes[interaction.guild.id][user.id]) strikes[interaction.guild.id][user.id] = []
+        // //Define what strikes is
+        // let strikes = interaction.client.dataStorage.strikes;
+        //
+        // //If strikes DB doesn't exist, make one
+        // if (!strikes[interaction.guild.id]) strikes[interaction.guild.id] = {};
+        //
+        // //If strikes for that user doesn't exist, give them an empty array
+        // if (!strikes[interaction.guild.id][user.id]) strikes[interaction.guild.id][user.id] = []
 
         //Mod logging channel fetch
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
-        let modChannel;
-        try {
-            modChannel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
-        } catch (e) {
+        //If modChannel doesn't exist...
+        if(modChannel == null) {
 
-            //Do nothing if there isn't a channel
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            });
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
 
         }
 
-        //Store the warning
+        //Save the strike type, reason, and date
+        await database.push(`${interaction.guild.id}_${user.id}_punishments`, { type: "Strike", reason: interaction.options.getString("reason"), date: new Date() });
 
-        await strikes[interaction.guild.id][user.id].push(interaction.options.getString("reason"));
-        await interaction.client.dataStorage.saveData();
-        // users.push(`${user.id}.punishCheck`, `STRIKE: ${interaction.options.getString("reason")}`);
 
-        //Alert that they were given a strike
+        //Wrap up to mod that they were given a strike
         interaction.reply({
             content: `User ${interaction.options.getUser("user")} successfully struck with reason \`${interaction.options.getString("reason")}\``,
             ephemeral: true
         });
 
-        //Log the warning
+        //Log the warning to the staff chat
         await modChannel.send({
             content: `:triangular_flag_on_post: **${interaction.user.tag}** has performed action: \`strike\`\n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Reason:\` ${interaction.options.getString("reason")}`
         });
@@ -80,75 +72,11 @@ module.exports = {
         //Attempt to DM the person warned
         try {
             await interaction.options.getUser("user").send({
-                content: `__**New Strike Received**__ \n
-                 You have been given a strike for the reason: **${interaction.options.getString("reason")}**`
+                content: `**You have received a new strike.**\n\`Guild:\` ${interaction.guild} \n\`Reason:\` ${interaction.options.getString("reason")}\n\`Date:\` ${new Date()}`
             });
         } catch (e) {
             //Oh, no! Well, we can't DM them... so we log nothing!
         }
 
-        //Automated actions on X strikes
-
-        //Define the strike amount
-        let strikeAmt = strikes[interaction.guild.id][user.id].length;
-
-        //Define member
-        let member = interaction.options.getMember("user")
-
-
-        //Actions on X warns.
-        if (strikeAmt === 2) {
-
-            //Alert the member of the action being taken
-            await member.send("[Automatic Punishment] You have been muted for 30 minutes due to reaching 2 strikes.")
-
-            //Mute the member
-            await member.disableCommunicationUntil(Date.now() + ms("30 minutes"), "2 strikes reached.")
-
-            //Log the action
-            await modChannel.send({content: ` :no_mouth: [Auto] Performed action: \`timeout\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Duration:\` 30m \n\`Reason:\` 2 strikes reached.`});
-
-        } else if (strikeAmt === 3) {
-
-            //Alert the member of the action being taken
-            await member.send("[Automatic Punishment] You have been muted for 2 hours due to reaching 3 strikes.")
-
-            //Mute the member
-            await member.disableCommunicationUntil(Date.now() + ms("2 hours"), "3 strikes reached.")
-
-            //Log the action
-            await modChannel.send({content: `:no_mouth: [Auto] Performed action: \`timeout\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Duration:\` 2h \n\`Reason:\` 3 strikes reached.`});
-
-        } else if (strikeAmt === 4) {
-
-            //Alert the member of the action being taken
-            await member.send("[Automatic Punishment] You have been kicked from the server for reaching **4** strikes.");
-
-            //Kick the member
-            await member.kick(interaction.options.getString("reason"));
-
-            //Log the action
-            await modChannel.send({content: `:boot: [Auto] Performed action: \`kick\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})*`});
-
-        } else if (strikeAmt === 5) {
-
-            //Alert the member of the action being taken
-            await member.send({content: "------------------------------\n⚠ __**Automated Alert**__ ⚠\n------------------------------\nYou are on your **fifth** strike. Your next strike will result in an automatic ban."})
-
-            //Log the action
-            await modChannel.send({content: `‼ The user **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* has reached **5/6** strikes. Their next strike is an automatic ban.`,})
-
-        } else if (strikeAmt >= 6) {
-
-            //Alert the member of the action being taken
-            await member.send("[Automatic Punishment] You have been banned from the server for reaching **6** strikes.");
-
-            //Ban the user
-            await interaction.options.getUser("user").ban(interaction.options.getUser("user"), {reason: interaction.options.getString("reason")});
-
-            //Log the action
-            await modChannel.send({content: `:hammer: [Auto] Performed action: \`ban\`\n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Reason:\` 6 strikes reached.`,});
-
-        }
     }
 }

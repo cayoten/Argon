@@ -20,18 +20,14 @@ module.exports = {
 
     async execute(interaction) {
 
-        //Set up the guild & channel, defined in setChannel
-        let channel;
+        //Set up modChannel
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
-        try {
-            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
-        } catch (e) {
+        //If modChannel doesn't exist...
+        if(modChannel == null) {
 
-            //If there isn't a channel in the database, let them know!
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            })
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+
         }
 
         //Define a reason for kicking
@@ -44,12 +40,15 @@ module.exports = {
             //Oh, no! We can't kick them. Well, nothing to log, just simply can't dm them!
         }
 
-
-        //Log the kick
-        await channel.send({content: `:boot: **${interaction.user.tag}** has performed action: \`kick\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Reason:\` ${reason}`});
-
         //Actually kick the user
         await interaction.guild.members.kick(interaction.options.getUser("user"));
+
+        //Store the kick in the audit system
+        await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, { type: "Kick", reason: reason, date: new Date() });
+
+
+        //Log the kick
+        await modChannel.send({content: `:boot: **${interaction.user.tag}** has performed action: \`kick\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Reason:\` ${reason}`});
 
         //Finally, reply that we're done!
         interaction.reply({

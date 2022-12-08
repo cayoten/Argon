@@ -22,17 +22,11 @@ module.exports = {
         //Define user
         let user = interaction.options.getUser("user")
 
-        //Define what strikes is
-        let strikes = interaction.client.dataStorage.strikes;
-
-        //Create a new empty object for this guild.
-        if (!strikes[interaction.guild.id]) strikes[interaction.guild.id] = {};
-
-        //Create a new empty array for this user.
-        if (!strikes[interaction.guild.id][user.id]) strikes[interaction.guild.id][user.id] = []
+        //Set strikes equal to the punishments database
+        const strikes = await database.get(`${interaction.guild.id}_${user.id}_punishments`) || [];
 
         //If there isn't any strikes, return
-        if (strikes[interaction.guild.id][user.id].length === 0) {
+        if (strikes.length === 0) {
             return interaction.reply({
                 content: "This user has a clean slate.",
                 ephemeral: true
@@ -40,37 +34,28 @@ module.exports = {
         }
 
         //Set up the guild & channel, defined in setChannel
-        let channel;
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
-        try {
-            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
-        } catch (e) {
+        //No mod channel?? 😢
+        if(modChannel == null) {
 
-            //If there isn't a channel in the database, let them know!
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            })
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+
         }
 
-        //Define strikeValue for next line
-        let strikeValue = interaction.options.getInteger("value")
-
-        //If strikeValue is null or == 0, return
-        if (isNaN(strikeValue) || strikeValue < 0 || strikeValue >= strikes[interaction.guild.id][user.id].length) {
+        //If strikeValue is less than 0, equals 0, or the value is greater than the length of strikes, return
+        if (strikes < 0 || interaction.options.getInteger("value") >= strikes.length) {
             return interaction.reply({
                 content: "Failed due to reason: `INVALID_STRIKE_ID`",
                 ephemeral: true
             })
         }
 
-        strikes[interaction.guild.id][user.id].splice(strikeValue, 1); //Remove the strike.
-
-        interaction.client.dataStorage.saveData()
+        //Remove the strike.
+        const modifiedStrikes = await database.pull(`${interaction.guild.id}_${user.id}_punishments`, (_, index) => index === interaction.options.getInteger("value"));
 
         //Log the ban
-        await channel.send({content: `:coffee: **${interaction.user.tag}** has performed action: \`nullify\` \n\`New Strike Count:\` **${strikes[interaction.guild.id][user.id].length}**`});
-
+        await modChannel.send({content: `:coffee: **${interaction.user.tag}** has performed action: \`nullify\` \n\`New Strike Count:\` **${modifiedStrikes.length}**`});
 
         //Finally, we're done!
         interaction.reply({

@@ -17,32 +17,27 @@ module.exports = {
         //Define user
         const user = interaction.options.getUser("user");
 
-        //Define strikes
-        let strikes = interaction.client.dataStorage.strikes;
-
-        //Create a new empty object for this guild.
-        if (!strikes[interaction.guild.id]) strikes[interaction.guild.id] = {};
-
-        ///Create a new empty array for this user.
-        if (!strikes[interaction.guild.id][user.id]) strikes[interaction.guild.id][user.id] = []
-
-        //Define userStrikes
-        let userStrikes = strikes[interaction.guild.id][user.id];
+        //Define the strike location
+        const strikes = await database.get(`${interaction.guild.id}_${user.id}_punishments`);
 
         //If the length is not 0, do this
-        if (userStrikes.length > 0) {
+        if (strikes != null) {
 
             //Define warnMessage and set it to be updated later
-            let warnMessage = `Listing **${userStrikes.length}** strikes for user ${user}.\n`;
+            let warnMessage = `Listing **${strikes.length}** punishments for user ${user}.\n`;
 
             //For each warning, list it
-            userStrikes.forEach((item, index) => {
-                warnMessage = warnMessage + `\`Strike ID:\` ${index} \`Strike Reason:\` ${item}\n`;
+            strikes.forEach((item, index) => {
+                warnMessage = warnMessage + `\`Punishment ID:\` ${index} \n- \`Type:\` ${item.type}\n- \`Reason:\` ${item.reason} \n- \`Date:\` ${item.date}\n\n`;
             })
+
 
             //Reply with warnMessage
             await interaction.reply({content: warnMessage});
+
         } else {
+
+            //If there are no strikes, return
             await interaction.reply({content: `This user has a clean slate.`});
         }
     }

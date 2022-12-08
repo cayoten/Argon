@@ -27,18 +27,14 @@ module.exports = {
 
     async execute(interaction) {
 
-        //Set up the guild & channel, defined in setChannel
-        let channel;
+        //Set up modChannel
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
-        try {
-            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
-        } catch (e) {
+        //If modChannel doesn't exist...
+        if(modChannel == null) {
 
-            //If there isn't a channel in the database, let them know!
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            })
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+
         }
 
         //Define a reason for banning
@@ -55,16 +51,22 @@ module.exports = {
         //If the ban is NOT permanent, do this first
         if (interaction.options.getString("time") !== "perm") {
 
-            interaction.client.dataStorage.addUserBan(interaction.options.getUser("user").id, interaction.guild.id, ms(interaction.options.getString("time")));
+            await database.push(`${interaction.guild.id}_bans`, { user: interaction.options.getUser("user").id, time: Date.now() + ms(interaction.options.getString("time")) });
+
+            // interaction.client.dataStorage.addUserBan(interaction.options.getUser("user").id, interaction.guild.id, ms(interaction.options.getString("time")));
 
         }
 
 
-        //Log the ban
-        await channel.send({content: `:hammer: **${interaction.user.tag}** has performed action: \`ban\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Time:\` ${interaction.options.getString("time")} \n\`Reason:\` ${reason}`});
-
-        //Actually ban the user
+        //Officially ban the user
         await interaction.guild.members.ban(interaction.options.getUser("user"), {days: 7, reason: reason})
+
+        //Log the ban
+        await modChannel.send({content: `:hammer: **${interaction.user.tag}** has performed action: \`ban\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Time:\` ${interaction.options.getString("time")} \n\`Reason:\` ${reason}`});
+
+        //Save the ban type, reason, and date
+        await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, { type: "Ban", reason: reason, date: new Date() });
+
 
         //Finally, reply that we're done!
         interaction.reply({

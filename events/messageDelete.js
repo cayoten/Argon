@@ -8,13 +8,9 @@ module.exports = {
         if (message.author.bot) return;
 
         //Define channel for the below line
-        let channel = message.client.dataStorage.serverData;
+        let channel = message.guild.channels.cache.get(await database.get(`${message.guild.id}.chatChannel`));
 
-        //Define chatChannel
-        let chatChannel = message.guild.channels.cache.get(channel[message.guild.id]["chatChannel"]);
-
-        //Don't do anything if there isn't a chat channel
-        if (!chatChannel) {
+        if (channel == null) {
             return;
         }
 
@@ -31,7 +27,7 @@ module.exports = {
         }
 
         //Finally, log this!
-        await chatChannel.send({
+        await channel.send({
             content: `:x: **${message.author.tag}** *(${message.author.id})*'s message has been deleted from ${message.channel}:`,
             embeds: [cLog]
         });

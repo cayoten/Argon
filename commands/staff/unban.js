@@ -15,27 +15,27 @@ module.exports = {
 
     async execute(interaction) {
 
-        //Define userId and guildId for the followup code
-        const userId = interaction.options.getString("snowflake");
-        const guildId = interaction.guild.id;
+        //Define userID and guildID for the followup code
+        const userID = interaction.options.getString("snowflake");
+        const guildID = interaction.guild.id;
 
-        //If the user is banned, remove said ban from the temp-ban storage.
-        if (interaction.dataStorage.isUserBanned(userId, guildId)) {
-            interaction.dataStorage.removeBan(userId, guildId)
+        //Define bans or set it to null
+        const bans = await database.get(`${guildID}_bans`) || [];
+
+
+        if (bans.some(el => el.user === userID)) {
+            // pull from the array with quick.db like for the unban checker
+            await database.pull(`${guildID}_bans`, el => el.user === userID)
         }
 
-        //Set up the guild & channel, defined in setChannel
-        let channel;
+        //Set up modChannel
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
-        try {
-            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
-        } catch (e) {
+        //If modChannel doesn't exist...
+        if(modChannel == null) {
 
-            //If there isn't a channel in the database, let them know!
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            })
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+
         }
 
 
@@ -44,9 +44,11 @@ module.exports = {
             await interaction.guild.bans.remove(interaction.options.getString("snowflake"));
 
             //Log the ban
-            await channel.send({content: `:heart: **${interaction.user.tag}** has performed action: \`unban\` \n\`Affected ID:\` **${interaction.options.getString("snowflake")}**`});
+            await modChannel.send({content: `:heart: **${interaction.user.tag}** has performed action: \`unban\` \n\`Affected ID:\` **${interaction.options.getString("snowflake")}**`});
 
         } catch (e) {
+
+            //If the ID is wrong, return
             return interaction.reply({
                 content: "I couldn't unban the user - is the snowflake right, or are they banned?",
                 ephemeral: true

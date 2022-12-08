@@ -11,13 +11,10 @@ module.exports = {
         }
 
         //Define channel for the below line
-        let channel = oldMessage.client.dataStorage.serverData;
+        let channel = oldMessage.guild.channels.cache.get(await database.get(`${oldMessage.guild.id}.chatChannel`));
 
-        //Define chatChannel
-        let chatChannel = oldMessage.guild.channels.cache.get(channel[oldMessage.guild.id]["chatChannel"]);
-
-        //Do nothing if there isn't a channel
-        if (!chatChannel) {
+        //If no channel, return
+        if (channel == null) {
             return;
         }
 
@@ -34,7 +31,7 @@ module.exports = {
         }
 
         //Finally, log it!
-        await chatChannel.send({
+        await channel.send({
             content: ` :warning:  **${oldMessage.author.tag}** *(${oldMessage.author.id})*'s message has been edited in ${oldMessage.channel}:`,
             embeds: [cLog]
         });

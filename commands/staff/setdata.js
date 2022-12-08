@@ -65,30 +65,21 @@ module.exports = {
         //Define action as subcommands
         const action = interaction.options.getSubcommand();
 
-        //Define channel & verify in serverData.json
-        let channel = interaction.client.dataStorage.serverData;
-
-        //If there isn't a server defined in the DB, make it defined
-        if (!channel[interaction.guild.id]) channel[interaction.guild.id] = {};
-
-        //Define actions using a switch
+        //Define actions using a switch case
         switch (action) {
 
 
             //If action is 'moderation'
             case "moderation":
 
-                //Set "modChannel" equal to the channel
-                channel[interaction.guild.id]["modChannel"] = interaction.options.getChannel("moderation").id;
-
-                //Save the data
-                await interaction.client.dataStorage.saveData();
-
-
-                // guilds.set(`${interaction.guild.id}.modChannel`, interaction.options.getChannel("moderation").id);
+                //Set "jlChannel" equal to the channel
+                await database.set(`${interaction.guild.id}.modChannel`, interaction.options.getChannel("moderation").id);
 
                 //Log end result
-                interaction.reply({content: `Set the moderation logging channel to <#${channel[interaction.guild.id]["modChannel"]}>.`});
+                interaction.reply({
+                    content: `Set the moderation logging channel to <#${await database.get(`${interaction.guild.id}.modChannel`)}>.`,
+                    ephemeral: true
+                });
 
                 break;
 
@@ -96,61 +87,51 @@ module.exports = {
             case "join-leave":
 
                 //Set "jlChannel" equal to the channel
-                channel[interaction.guild.id]["jlChannel"] = interaction.options.getChannel("join-leave").id;
-
-                //Save the data
-                await interaction.client.dataStorage.saveData();
-
-                //Save the channel to the field
-                //guilds.set(`${interaction.guild.id}.jlChannel`, interaction.options.getChannel("join-leave").id);
+                await database.set(`${interaction.guild.id}.jlChannel`, interaction.options.getChannel("join-leave").id);
 
                 //Log end result
-                interaction.reply({content: `Set the join-leave channel to <#${channel[interaction.guild.id]["jlChannel"]}>.`});
+                interaction.reply({
+                    content: `Set the join-leave channel to <#${await database.get(`${interaction.guild.id}.jlChannel`)}>.`,
+                    ephemeral: true
+                });
 
                 break;
 
             case "chat":
 
                 //Set "chatChannel" equal to the channel
-                channel[interaction.guild.id]["chatChannel"] = interaction.options.getChannel("chat").id;
-
-                //Save the data
-                await interaction.client.dataStorage.saveData();
-
-                //Save the channel to the field
-                // guilds.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
+                await database.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
 
                 //Log end result
-                interaction.reply({content: `Set the chat logging channel to <#${channel[interaction.guild.id]["chatChannel"]}>.`});
+                interaction.reply({
+                    content: `Set the chat logging channel to <#${await database.get(`${interaction.guild.id}.chatChannel`)}>.`,
+                    ephemeral: true});
 
                 break;
 
             case "verify-key":
 
-                //Set "modChannel" equal to the channel
-                channel[interaction.guild.id]["verifyKey"] = interaction.options.getString("key");
-
-                //Save the data
-                await interaction.client.dataStorage.saveData();
+                //Set "verify-key" equal to the channel
+                await database.set(`${interaction.guild.id}.verifyKey`, interaction.options.getString("key"));
 
                 //Log end result
-                interaction.reply({content: `Set the server's verification key to \`${channel[interaction.guild.id]["verifyKey"]}\`.`});
+                interaction.reply({
+                    content: `Set the server's verification key to \`${await database.get(`${interaction.guild.id}.verifyKey`)}\`.`,
+                    ephemeral: true
+                });
 
                 break;
 
             case "member-role":
 
-                //Set "chatChannel" equal to the channel
-                channel[interaction.guild.id]["memberRole"] = interaction.options.getRole("role").id;
-
-                //Save the data
-                await interaction.client.dataStorage.saveData();
-
-                //Save the channel to the field
-                // guilds.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
+                //Set "member-role" equal to the channel
+                await database.set(`${interaction.guild.id}.memberRole`, interaction.options.getRole("role").id);
 
                 //Log end result
-                interaction.reply({content: `Set the server's member role to \`${channel[interaction.guild.id]["memberRole"]}\`.`});
+                interaction.reply({
+                    content: `Set the server's member role to \`${await database.get(`${interaction.guild.id}.memberRole`)}\`.`,
+                    ephemeral: true
+                });
 
                 break;
         }

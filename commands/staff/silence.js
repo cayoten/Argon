@@ -27,16 +27,14 @@ module.exports = {
 
     async execute(interaction) {
 
-        let channel;
-        try {
-            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["modChannel"]);
-        } catch (e) {
+        //Set up modChannel
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.chatChannel`));
 
-            //If there isn't a channel in the database, let them know!
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            })
+        //If modChannel doesn't exist...
+        if(modChannel == null) {
+
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+
         }
 
         //Define a reason for silencing them
@@ -49,7 +47,7 @@ module.exports = {
             //Oh, no! We can't ban them. Well, nothing to log, just simply can't dm them!
         }
 
-        await channel.send({content: `:no_mouth: **${interaction.user.tag}** has performed action: \`silence\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Time:\` ${interaction.options.getString("time")} \n\`Reason:\` ${reason}`});
+        await modChannel.send({content: `:no_mouth: **${interaction.user.tag}** has performed action: \`silence\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Time:\` ${interaction.options.getString("time")} \n\`Reason:\` ${reason}`});
 
         //Actually silence the user
         await interaction.options.getMember("user").timeout(ms(interaction.options.getString("time")), reason)

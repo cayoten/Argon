@@ -16,29 +16,31 @@ module.exports = {
         //Identify pinned messages
         const pinned = (await interaction.channel.messages.fetch()).filter(msg => !msg.pinned);
 
-        //Define channel
-        let channel;
-        try {
-            channel = interaction.guild.channels.cache.get(interaction.client.dataStorage.serverData[interaction.guild.id]["chatChannel"]);
-        } catch (e) {
+        //Set up chatChannel
+        let chatChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.chatChannel`));
 
-            //If there isn't a channel in the database, let them know!
-            return interaction.reply({
-                content: "Unable to continue, missing moderation channel.\nSet one up with /setdata!",
-                ephemeral: true
-            })
+        //If chatChannel doesn't exist...
+        if(chatChannel == null) {
+
+            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+
         }
 
-        //Define & delete the messages
-        let deletedMessages = await interaction.channel.bulkDelete(pinned.first((parseInt(interaction.options.getInteger("amount")))), true).catch(console.error);
+        //Define & delete the messages, wrapped in a try so that it finishes out the code
+        let deletedMessages;
+        try {
 
-        //If the amount is zero or there is an error, return
-        if (deletedMessages === undefined || deletedMessages.size === 0) {
-            return interaction.reply({content: "Unable to clear messages."})
+            deletedMessages = await interaction.channel.bulkDelete(pinned.first((parseInt(interaction.options.getInteger("amount")))), true).catch(console.error);
+
+        } catch(e) {
+                return interaction.reply({
+                    content: "It *may* have been done..? An error was encountered, but it usually means that you tried clearing too many messages.",
+                    ephemeral: true
+                })
         }
 
         //Log the clearing
-        await channel.send({content: `:broom: **${interaction.user.tag}** has performed action: \`chat clear\`\n\`Cleared:\` **${deletedMessages.size}** messages.`});
+        await chatChannel.send({content: `:broom: **${interaction.user.tag}** has performed action: \`chat clear\`\n\`Cleared:\` **${deletedMessages.size}** messages.`});
 
         //Finally, respond!
         interaction.reply({
