@@ -1,27 +1,45 @@
 const {REST} = require("@discordjs/rest");
-const {Routes} = require("discord-api-types/v9");
+const {Routes, ActivityType} = require("discord-api-types/v9");
 require("dotenv").config();
 
 module.exports = {
     name: "ready",
     once: true,
     execute(client) {
+
+        //Log that the bot is up
         console.log("Argon is online.");
 
+        //Set bot's activity
+        client.user.setActivity('the chat.', { type: ActivityType.Watching });
+
+        //Define Client ID
         const CLIENT_ID = client.user.id;
-        const rest = new REST({version: "9"}).setToken(process.env.TOKEN);
+
+        //Create rest API to log in with slash commands
+        const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
         (async () => {
             try {
+
+                //If .ENV has a VERSION="production" entry
                 if (process.env.VERSION === "production") {
+
+                    //If it is production, create the commands globally
                     await rest.put(Routes.applicationCommands(CLIENT_ID), {
                         body: client.commands.map(item => item.data.toJSON())
                     });
+
+                    //Return that global was successful
                     console.log("Successfully registered commands globally.")
                 } else {
+
+                    //If there was not a VERSION="production" entry, create the commands locally using GUILD_ID=<guildID> in .ENV
                     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, process.env.GUILD_ID), {
                         body: client.commands.map(item => item.data.toJSON())
                     });
+
+                    //Log that local was successful
                     console.log("Successfully registered commands locally.")
                 }
             } catch (err) {
@@ -29,7 +47,7 @@ module.exports = {
             }
         })();
 
-
+        //When banning someone, if it isn't permanent, this is the scheduled timer to unban them
         setInterval(async () => {
 
             //Written by Zelak#1444 from Plexi Development, they are lifesavers - https://discord.gg/plexidev
