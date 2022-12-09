@@ -3,7 +3,7 @@ const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("mimic")
-        .setDescription("Says what you tell me to say to the server")
+        .setDescription("Non-ephemeral mimicry command. I'll say what you do.")
         .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addStringOption(option =>
             option

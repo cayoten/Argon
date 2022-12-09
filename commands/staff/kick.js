@@ -24,7 +24,7 @@ module.exports = {
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
         //If modChannel doesn't exist...
-        if(modChannel == null) {
+        if (modChannel == null) {
 
             return interaction.reply("Missing channel data. Set one up with `/setdata`!");
 
@@ -43,12 +43,15 @@ module.exports = {
         //Actually kick the user
         await interaction.guild.members.kick(interaction.options.getUser("user"));
 
-        //Store the kick in the audit system
-        await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, { type: "Kick", reason: reason, date: new Date() });
-
-
         //Log the kick
         await modChannel.send({content: `:boot: **${interaction.user.tag}** has performed action: \`kick\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Reason:\` ${reason}`});
+
+        //Store the kick in the audit system
+        await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, {
+            type: "Kick",
+            reason: reason,
+            date: new Date()
+        });
 
         //Finally, reply that we're done!
         interaction.reply({

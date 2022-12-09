@@ -11,7 +11,6 @@ module.exports = {
         ),
     async execute(interaction) {
 
-
         //Define channel in serverData.json
         let verifyKey = await database.get(`${interaction.guild.id}.verifyKey`);
         let memberRole = await database.get(`${interaction.guild.id}.memberRole`);
@@ -34,7 +33,6 @@ module.exports = {
 
         //Define the string "key" to answer
         let answer = interaction.options.getString("key")
-
 
         //If the key DOES match
         if (verifyKey === answer) {

@@ -31,7 +31,7 @@ module.exports = {
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
         //If modChannel doesn't exist...
-        if(modChannel == null) {
+        if (modChannel == null) {
 
             return interaction.reply("Missing channel data. Set one up with `/setdata`!");
 
@@ -47,16 +47,17 @@ module.exports = {
             //Oh, no! We can't ban them. Well, nothing to log, just simply can't dm them!
         }
 
-
         //If the ban is NOT permanent, do this first
         if (interaction.options.getString("time") !== "perm") {
 
-            await database.push(`${interaction.guild.id}_bans`, { user: interaction.options.getUser("user").id, time: Date.now() + ms(interaction.options.getString("time")) });
+            await database.push(`${interaction.guild.id}_bans`, {
+                user: interaction.options.getUser("user").id,
+                time: Date.now() + ms(interaction.options.getString("time"))
+            });
 
             // interaction.client.dataStorage.addUserBan(interaction.options.getUser("user").id, interaction.guild.id, ms(interaction.options.getString("time")));
 
         }
-
 
         //Officially ban the user
         await interaction.guild.members.ban(interaction.options.getUser("user"), {days: 7, reason: reason})
@@ -65,8 +66,11 @@ module.exports = {
         await modChannel.send({content: `:hammer: **${interaction.user.tag}** has performed action: \`ban\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})* \n\`Time:\` ${interaction.options.getString("time")} \n\`Reason:\` ${reason}`});
 
         //Save the ban type, reason, and date
-        await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, { type: "Ban", reason: reason, date: new Date() });
-
+        await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, {
+            type: "Ban",
+            reason: reason,
+            date: new Date()
+        });
 
         //Finally, reply that we're done!
         interaction.reply({

@@ -20,7 +20,7 @@ module.exports = {
         let chatChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.chatChannel`));
 
         //If chatChannel doesn't exist...
-        if(chatChannel == null) {
+        if (chatChannel == null) {
 
             return interaction.reply("Missing channel data. Set one up with `/setdata`!");
 
@@ -32,11 +32,11 @@ module.exports = {
 
             deletedMessages = await interaction.channel.bulkDelete(pinned.first((parseInt(interaction.options.getInteger("amount")))), true).catch(console.error);
 
-        } catch(e) {
-                return interaction.reply({
-                    content: "It *may* have been done..? An error was encountered, but it usually means that you tried clearing too many messages.",
-                    ephemeral: true
-                })
+        } catch (e) {
+            return interaction.reply({
+                content: "It *may* have been done..? An error was encountered, but it usually means that you tried clearing too many messages.",
+                ephemeral: true
+            })
         }
 
         //Log the clearing

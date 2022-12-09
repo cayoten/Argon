@@ -91,7 +91,7 @@ module.exports = {
 
                 //Log end result
                 interaction.reply({
-                    content: `Set the join-leave channel to <#${await database.get(`${interaction.guild.id}.jlChannel`)}>.`,
+                    content: `Set the join-leave logging channel to <#${await database.get(`${interaction.guild.id}.jlChannel`)}>.`,
                     ephemeral: true
                 });
 
@@ -105,7 +105,8 @@ module.exports = {
                 //Log end result
                 interaction.reply({
                     content: `Set the chat logging channel to <#${await database.get(`${interaction.guild.id}.chatChannel`)}>.`,
-                    ephemeral: true});
+                    ephemeral: true
+                });
 
                 break;
 

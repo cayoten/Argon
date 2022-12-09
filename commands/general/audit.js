@@ -14,17 +14,14 @@ module.exports = {
 
     async execute(interaction) {
 
-        //Define user
-        const user = interaction.options.getUser("user");
-
         //Define the strike location
-        const strikes = await database.get(`${interaction.guild.id}_${user.id}_punishments`);
+        const strikes = await database.get(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`);
 
         //If the length is not 0, do this
         if (strikes != null) {
 
             //Define warnMessage and set it to be updated later
-            let warnMessage = `Listing **${strikes.length}** punishments for user ${user}.\n`;
+            let warnMessage = `Listing **${strikes.length}** punishments for user ${interaction.options.getUser("user")}.\n`;
 
             //For each warning, list it
             strikes.forEach((item, index) => {

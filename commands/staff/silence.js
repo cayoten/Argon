@@ -31,7 +31,7 @@ module.exports = {
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.chatChannel`));
 
         //If modChannel doesn't exist...
-        if(modChannel == null) {
+        if (modChannel == null) {
 
             return interaction.reply("Missing channel data. Set one up with `/setdata`!");
 
