@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  argon:
+    restart: on-failure
+    build: .
+    env_file:
+      - .env
+      # Yes, it loads environment vars from this file by default. 
+      # Implicit makes it easier to remember
+    volumes:
+      # This is where we mount in the project files to the container.
+      # Since it is in the git repo, we have the files in the folder 
+      # the docker-compose.yml file is in. It needs the package-lock, env
+      # and a few other things. This includes the sqlite file.
+      - ./:/argon
+      
