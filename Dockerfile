@@ -22,4 +22,4 @@ rm -rf /var/cache/apk/*
 ENTRYPOINT ["/bin/sh", "docker-entrypoint.sh"]
 
 # Define what the image "runs"
-CMD ["npm", "index.js"]
+CMD ["node", "index.js"]
