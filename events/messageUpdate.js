@@ -13,7 +13,7 @@ module.exports = {
         //Define channel for the below line
         let channel = oldMessage.guild.channels.cache.get(await database.get(`${oldMessage.guild.id}.chatChannel`));
 
-        //If no channel, return
+        //If there isn't a channel in the DB, return
         if (channel == null) {
             return;
         }

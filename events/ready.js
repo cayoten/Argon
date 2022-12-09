@@ -10,7 +10,7 @@ module.exports = {
         //Log that the bot is up
         console.log("Argon is online.");
 
-        //Set bot's activity
+        //Sets the bot activity
         client.user.setActivity('the chat.', { type: ActivityType.Watching });
 
         //Define Client ID
