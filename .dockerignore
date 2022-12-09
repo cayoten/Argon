@@ -1,0 +1,7 @@
+/.idea/
+/node_modules/
+json.sqlite
+README.md
+.gitignore
+.git
+.dockerignore
