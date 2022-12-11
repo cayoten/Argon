@@ -39,7 +39,7 @@ module.exports = {
 
         //Store the kick in the audit system
         await database.push(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`, {
-            type: "Kick",
+            type: "Strike",
             reason: interaction.options.getString("reason"),
             date: new Date()
         });
