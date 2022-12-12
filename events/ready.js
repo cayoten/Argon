@@ -11,13 +11,13 @@ module.exports = {
         console.log("Argon is online.");
 
         //Sets the bot activity
-        client.user.setActivity('the chat.', { type: ActivityType.Watching });
+        client.user.setActivity('the chat.', {type: ActivityType.Watching});
 
         //Define Client ID
         const CLIENT_ID = client.user.id;
 
         //Create rest API to log in with slash commands
-        const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
+        const rest = new REST({version: "10"}).setToken(process.env.TOKEN);
 
         (async () => {
             try {
@@ -54,7 +54,7 @@ module.exports = {
 
             const allServersBans = (await database.all()).filter(element => element.id.endsWith("_bans"));
 
-            for(let allServersBan of allServersBans ) {
+            for (let allServersBan of allServersBans) {
                 // get id from key
                 // split at _ so the key goes from "<guild_id>_bans" to ["<guild_id>", "bans"]
                 // take the first element in the array which is the guild_id

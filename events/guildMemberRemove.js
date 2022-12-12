@@ -11,7 +11,7 @@ module.exports = {
         }
 
         //Log and send
-        await channel.send({content: `➕ ${member} (**${member.user.tag}**) has joined. (${member.guild.memberCount}M)`});
+        await channel.send({content: `➖ ${member} (**${member.user.tag}**) has left. (${member.guild.memberCount}M)`});
 
     }
 }
