@@ -28,7 +28,7 @@ module.exports = {
     async execute(interaction) {
 
         //Set up modChannel
-        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.chatChannel`));
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
         //If modChannel doesn't exist...
         if (modChannel == null) {
