@@ -1,10 +1,11 @@
-const {SlashCommandBuilder} = require("discord.js");
+const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
 
 module.exports = {
 
     data: new SlashCommandBuilder()
         .setName("audit")
         .setDescription("Check someone (such as yourself) for punishments")
+        .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addUserOption(option =>
             option
                 .setName("user")
