@@ -4,7 +4,7 @@ module.exports = {
 
     data: new SlashCommandBuilder()
         .setName("release")
-        .setDescription("Silences a user")
+        .setDescription("Removes a person's timeout")
         .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageMessages)
         .addUserOption(option =>
             option
