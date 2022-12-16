@@ -10,9 +10,16 @@ module.exports = {
 
         //If there isn't a channel in the DB, return
         if (jlChannel == null) return;
-        if (modChannel == null) return;
+
+        //Log and send
+        await jlChannel.send({content: `➖ ${member} (**${member.user.tag}**) has left. (${member.guild.memberCount}M)`});
 
         //Check if someone was kicked
+
+        //First, if the mod channel is nothing, return
+        if (modChannel == null) return;
+
+        //Define logs to member kick
         let logs = await member.guild.fetchAuditLogs({type: AuditLogEvent.MemberKick});
 
         //Obtain the amount of kicks (1)
