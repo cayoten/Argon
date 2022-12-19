@@ -20,7 +20,10 @@ module.exports = {
         //If modChannel doesn't exist, return and reply.
         if (modChannel == null) {
 
-            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+            return interaction.reply({
+                content: "Missing channel data. Set one up with `/setdata`!",
+                ephemeral: true
+            });
 
         }
 

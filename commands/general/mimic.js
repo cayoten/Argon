@@ -14,8 +14,13 @@ module.exports = {
     async execute(interaction) {
 
         //Reply with what the user said
-        interaction.reply({
+        interaction.channel.send({
             content: interaction.options.getString("message")
+        })
+
+        interaction.reply({
+            content: "Your wish is my command.",
+            ephemeral: true
         })
     }
 }

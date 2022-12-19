@@ -19,10 +19,13 @@ module.exports = {
         //Set up chatChannel
         let chatChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.chatChannel`));
 
-        //If chatChannel doesn't exist...
+        //If modChannel doesn't exist...
         if (chatChannel == null) {
 
-            return interaction.reply("Missing channel data. Set one up with `/setdata`!");
+            return interaction.reply({
+                content: "Missing channel data. Set one up with `/setdata`!",
+                ephemeral: true
+            });
 
         }
 
