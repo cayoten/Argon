@@ -14,15 +14,19 @@ module.exports = {
         ),
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
+
         //Set up modChannel
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
         //If modChannel doesn't exist, return and reply.
         if (modChannel == null) {
 
-            return interaction.reply({
-                content: "Missing channel data. Set one up with `/setdata`!",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setdata`!"
             });
 
         }
@@ -34,9 +38,8 @@ module.exports = {
         await modChannel.send({content: `:speaking_head:  **${interaction.user.tag}** has performed action: \`remove timeout\` \n\`Affected User:\` **${interaction.options.getUser("user").tag}** *(${interaction.options.getUser("user").id})*`});
 
         //Finally reply
-        await interaction.reply({
-            content: `Action \`remove timeout\` successfully performed on ${interaction.options.getUser("user")}.`,
-            ephemeral: true
+        await interaction.editReply({
+            content: `Action \`remove timeout\` successfully performed on ${interaction.options.getUser("user")}.`
         });
     }
 }

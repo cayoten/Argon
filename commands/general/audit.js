@@ -15,6 +15,9 @@ module.exports = {
 
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply();
+
         //Define the strike location
         const strikes = await database.get(`${interaction.guild.id}_${interaction.options.getUser("user").id}_punishments`);
 
@@ -31,12 +34,12 @@ module.exports = {
 
 
             //Reply with warnMessage
-            await interaction.reply({content: warnMessage});
+            await interaction.editReply({content: warnMessage});
 
         } else {
 
             //If there are no strikes, return
-            await interaction.reply({content: `This user has a clean slate.`});
+            await interaction.editReply({content: `This user has a clean slate.`});
         }
     }
 }

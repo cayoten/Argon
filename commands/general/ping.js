@@ -7,10 +7,13 @@ module.exports = {
         .setDescription("Pong!"),
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true});
+
         //Reply to the user
-        interaction.reply({
+        interaction.editReply({
             content: `Ping?`,
-            ephemeral: true
         })
 
         //Wait 500ms

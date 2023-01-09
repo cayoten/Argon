@@ -12,6 +12,11 @@ module.exports = {
                 .setRequired(true)
         ),
     async execute(interaction) {
+        
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
 
         //Identify pinned messages
         const pinned = (await interaction.channel.messages.fetch()).filter(msg => !msg.pinned);
@@ -22,9 +27,8 @@ module.exports = {
         //If modChannel doesn't exist...
         if (chatChannel == null) {
 
-            return interaction.reply({
-                content: "Missing channel data. Set one up with `/setdata`!",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setdata`!"
             });
 
         }
@@ -36,9 +40,8 @@ module.exports = {
             deletedMessages = await interaction.channel.bulkDelete(pinned.first((parseInt(interaction.options.getInteger("amount")))), true).catch(console.error);
 
         } catch (e) {
-            return interaction.reply({
-                content: "It *may* have been done..? An error was encountered, but it usually means that you tried clearing too many messages.",
-                ephemeral: true
+            return interaction.editReply({
+                content: "It *may* have been done..? An error was encountered, but it usually means that you tried clearing too many messages."
             })
         }
 
@@ -46,9 +49,8 @@ module.exports = {
         await chatChannel.send({content: `:broom: **${interaction.user.tag}** has performed action: \`chat clear\`\n\`Cleared:\` **${deletedMessages.size}** messages.`});
 
         //Finally, respond!
-        interaction.reply({
-            content: `Action \`clear chat [size ${deletedMessages.size}]\` applied successfully.`,
-            ephemeral: true
+        interaction.editReply({
+            content: `Action \`clear chat [size ${deletedMessages.size}]\` applied successfully.`
         })
     }
 }

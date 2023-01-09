@@ -13,14 +13,17 @@ module.exports = {
         ),
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed - Ephemeral since editReply cannot be changed to ephemeral
+        await interaction.deferReply({
+            ephemeral: true});
+
         //Reply with what the user said
         interaction.channel.send({
             content: interaction.options.getString("message")
         })
 
-        interaction.reply({
-            content: "Your wish is my command.",
-            ephemeral: true
+        interaction.editReply({
+            content: "Your wish is my command."
         })
     }
 }

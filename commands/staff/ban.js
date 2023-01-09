@@ -4,6 +4,7 @@ const ms = require("ms");
 module.exports = {
 
     data: new SlashCommandBuilder()
+
         .setName("ban")
         .setDescription("Bans a user")
         .setDefaultMemberPermissions(PermissionsBitField.Flags.BanMembers)
@@ -27,15 +28,24 @@ module.exports = {
 
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
+
+        //Check if command is self-inflicting or targeted towards a staff
+        if(interaction.user === interaction.options.getUser("user") || interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            return interaction.editReply("Unable to execute this action on this user.")
+        }
+
         //Set up modChannel
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
         //If modChannel doesn't exist...
         if (modChannel == null) {
 
-            return interaction.reply({
-                content: "Missing channel data. Set one up with `/setdata`!",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setdata`!"
             });
 
         }
@@ -76,9 +86,8 @@ module.exports = {
         });
 
         //Finally, reply that we're done!
-        interaction.reply({
-            content: `Action \`ban user\` successfully performed on ${interaction.options.getUser("user")}.`,
-            ephemeral: true
+        interaction.editReply({
+            content: `Action \`ban user\` successfully performed on ${interaction.options.getUser("user")}.`
         });
     }
 }

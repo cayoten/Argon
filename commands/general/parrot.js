@@ -12,10 +12,13 @@ module.exports = {
         ),
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true});
+
         //Reply with what the user said
-        interaction.reply({
-            content: "*I repeat back to you:* " + interaction.options.getString("message"),
-            ephemeral: true
+        interaction.editReply({
+            content: "*I repeat back to you:* " + interaction.options.getString("message")
         })
     }
 }

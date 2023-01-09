@@ -15,6 +15,11 @@ module.exports = {
 
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
+
         //Define userID and guildID for the followup code
         const userID = interaction.options.getString("snowflake");
         const guildID = interaction.guild.id;
@@ -34,9 +39,8 @@ module.exports = {
         //If modChannel doesn't exist...
         if (modChannel == null) {
 
-            return interaction.reply({
-                content: "Missing channel data. Set one up with `/setdata`!",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setdata`!"
             });
 
         }
@@ -52,16 +56,14 @@ module.exports = {
         } catch (e) {
 
             //If the ID is wrong, return
-            return interaction.reply({
-                content: "I couldn't unban the user - is the snowflake right, or are they banned?",
-                ephemeral: true
+            return interaction.editReply({
+                content: "I couldn't unban the user - is the snowflake right, or are they banned?"
             });
         }
 
         //Finally, respond
-        await interaction.reply({
-            content: `Unbanned the specified user.`,
-            ephemeral: true
+        await interaction.editReply({
+            content: `Unbanned the specified user.`
         });
     }
 }

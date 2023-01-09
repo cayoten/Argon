@@ -61,6 +61,11 @@ module.exports = {
                         .setRequired(true))),
 
     async execute(interaction) {
+        
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
 
         //Define action as subcommands
         const action = interaction.options.getSubcommand();
@@ -76,9 +81,8 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.modChannel`, interaction.options.getChannel("moderation").id);
 
                 //Log end result
-                interaction.reply({
-                    content: `Set the moderation logging channel to <#${await database.get(`${interaction.guild.id}.modChannel`)}>.`,
-                    ephemeral: true
+                interaction.editReply({
+                    content: `Set the moderation logging channel to <#${await database.get(`${interaction.guild.id}.modChannel`)}>.`
                 });
 
                 break;
@@ -90,9 +94,8 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.jlChannel`, interaction.options.getChannel("join-leave").id);
 
                 //Log end result
-                interaction.reply({
-                    content: `Set the join-leave logging channel to <#${await database.get(`${interaction.guild.id}.jlChannel`)}>.`,
-                    ephemeral: true
+                interaction.editReply({
+                    content: `Set the join-leave logging channel to <#${await database.get(`${interaction.guild.id}.jlChannel`)}>.`
                 });
 
                 break;
@@ -103,9 +106,8 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
 
                 //Log end result
-                interaction.reply({
-                    content: `Set the chat logging channel to <#${await database.get(`${interaction.guild.id}.chatChannel`)}>.`,
-                    ephemeral: true
+                interaction.editReply({
+                    content: `Set the chat logging channel to <#${await database.get(`${interaction.guild.id}.chatChannel`)}>.`
                 });
 
                 break;
@@ -116,9 +118,8 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.verifyKey`, interaction.options.getString("key"));
 
                 //Log end result
-                interaction.reply({
-                    content: `Set the server's verification key to \`${await database.get(`${interaction.guild.id}.verifyKey`)}\`.`,
-                    ephemeral: true
+                interaction.editReply({
+                    content: `Set the server's verification key to \`${await database.get(`${interaction.guild.id}.verifyKey`)}\`.`
                 });
 
                 break;
@@ -129,9 +130,8 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.memberRole`, interaction.options.getRole("role").id);
 
                 //Log end result
-                interaction.reply({
-                    content: `Set the server's member role to \`${await database.get(`${interaction.guild.id}.memberRole`)}\`.`,
-                    ephemeral: true
+                interaction.editReply({
+                    content: `Set the server's member role to \`${await database.get(`${interaction.guild.id}.memberRole`)}\`.`
                 });
 
                 break;

@@ -19,6 +19,16 @@ module.exports = {
         ),
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
+
+        //Check if command is self-inflicting or targeted towards a staff
+        if(interaction.user === interaction.options.getUser("user") || interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            return interaction.editReply("Unable to execute this action on this user.")
+        }
+
         //Define user
         let user = interaction.options.getUser("user")
 
@@ -27,9 +37,8 @@ module.exports = {
 
         //If there isn't any strikes, return
         if (strikes.length === 0) {
-            return interaction.reply({
-                content: "This user has a clean slate.",
-                ephemeral: true
+            return interaction.editReply({
+                content: "This user has a clean slate."
             })
         }
 
@@ -39,18 +48,16 @@ module.exports = {
         //No mod channel?? 😢
         if (modChannel == null) {
 
-            return interaction.reply({
-                content: "Missing channel data. Set one up with `/setdata`!",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setdata`!"
             });
 
         }
 
         //If strikeValue is less than 0, equals 0, or the value is greater than the length of strikes, return
         if (strikes < 0 || interaction.options.getInteger("value") >= strikes.length) {
-            return interaction.reply({
-                content: "Failed due to reason: `INVALID_STRIKE_ID`",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Failed due to reason: `INVALID_STRIKE_ID`"
             })
         }
 
@@ -61,9 +68,8 @@ module.exports = {
         await modChannel.send({content: `:coffee: **${interaction.user.tag}** has performed action: \`nullify\` \n\`New Strike Count:\` **${modifiedStrikes.length}**`});
 
         //Finally, we're done!
-        interaction.reply({
-            content: `Action completed with value \`${interaction.options.getInteger("value")}\` on user ${interaction.options.getUser("user")}`,
-            ephemeral: true
+        interaction.editReply({
+            content: `Action completed with value \`${interaction.options.getInteger("value")}\` on user ${interaction.options.getUser("user")}`
         })
 
     }

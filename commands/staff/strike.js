@@ -22,15 +22,24 @@ module.exports = {
 
     async execute(interaction) {
 
+        //At the start, we defer to prevent Discord Interaction Failed
+        await interaction.deferReply({
+            ephemeral: true
+        });
+
+        //Check if command is self-inflicting or targeted towards a staff
+        if(interaction.user === interaction.options.getUser("user") || interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            return interaction.editReply("Unable to execute this action on this user.")
+        }
+
         //Mod logging channel fetch
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
 
         //If modChannel doesn't exist...
         if (modChannel == null) {
 
-            return interaction.reply({
-                content: "Missing channel data. Set one up with `/setdata`!",
-                ephemeral: true
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setdata`!"
             });
 
         }
@@ -57,9 +66,8 @@ module.exports = {
         }
 
         //Wrap up to mod that they were given a strike
-        interaction.reply({
-            content: `User ${interaction.options.getUser("user")} successfully struck with reason \`${interaction.options.getString("reason")}\``,
-            ephemeral: true
+        interaction.editReply({
+            content: `User ${interaction.options.getUser("user")} successfully struck with reason \`${interaction.options.getString("reason")}\``
         });
 
 
