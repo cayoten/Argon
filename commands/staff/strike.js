@@ -27,10 +27,13 @@ module.exports = {
             ephemeral: true
         });
 
-        //Check if command is self-inflicting or targeted towards a staff
-        if(interaction.user === interaction.options.getUser("user") || interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
-            return interaction.editReply("Unable to execute this action on this user.")
-        }
+        //Wrap in a try since we may be using a snowflake of someone not in the server
+        try {
+            //Check if command is self-inflicting or targeted towards a staff
+            if(interaction.user === interaction.options.getUser("user") || interaction.options.getMember("user").permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+                return interaction.editReply("Unable to execute this action on this user.")
+            }
+        } catch(e) {}
 
         //Mod logging channel fetch
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
