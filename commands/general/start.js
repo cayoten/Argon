@@ -121,7 +121,7 @@ module.exports = {
         }
 
         //If the data WAS received, continue on & reply that we've gotten it!
-        await modalData.reply({
+        await modalData.followUp({
             content: "Verification received. We'll get back to you shortly!",
             ephemeral: true
         });
