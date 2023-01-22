@@ -3,7 +3,7 @@ const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("setdata")
+        .setName("setlogdata")
         .setDescription("Sets specific data for certain commands")
         .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
 
@@ -16,6 +16,17 @@ module.exports = {
                     option
                         .setName("join-leave")
                         .setDescription("Sets the join-leave channel")
+                        .setRequired(true)))
+
+        //Gatekeeper (verification) logging
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('gatekeeper')
+                .setDescription(`The channel to send verification questions`)
+                .addChannelOption(option =>
+                    option
+                        .setName("gatekeeper")
+                        .setDescription("The channel to set for gatekeeping")
                         .setRequired(true)))
 
         //Moderation logging
@@ -38,30 +49,10 @@ module.exports = {
                     option
                         .setName("chat")
                         .setDescription("The channel to set for chat logs")
-                        .setRequired(true)))
-
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('verify-key')
-                .setDescription('Sets the verification key')
-                .addStringOption(option =>
-                    option
-                        .setName("key")
-                        .setDescription("The verification key")
-                        .setRequired(true)))
-
-        .addSubcommand(subcommand =>
-            subcommand
-                .setName('member-role')
-                .setDescription('Sets the member role to add for verification')
-                .addRoleOption(option =>
-                    option
-                        .setName("role")
-                        .setDescription("The role")
                         .setRequired(true))),
 
     async execute(interaction) {
-        
+
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
             ephemeral: true
@@ -81,7 +72,7 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.modChannel`, interaction.options.getChannel("moderation").id);
 
                 //Log end result
-                interaction.editReply({
+                await interaction.editReply({
                     content: `Set the moderation logging channel to <#${await database.get(`${interaction.guild.id}.modChannel`)}>.`
                 });
 
@@ -94,7 +85,7 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.jlChannel`, interaction.options.getChannel("join-leave").id);
 
                 //Log end result
-                interaction.editReply({
+                await interaction.editReply({
                     content: `Set the join-leave logging channel to <#${await database.get(`${interaction.guild.id}.jlChannel`)}>.`
                 });
 
@@ -106,35 +97,24 @@ module.exports = {
                 await database.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
 
                 //Log end result
-                interaction.editReply({
+                await interaction.editReply({
                     content: `Set the chat logging channel to <#${await database.get(`${interaction.guild.id}.chatChannel`)}>.`
                 });
 
                 break;
 
-            case "verify-key":
+            case "gatekeeper":
 
-                //Set "verify-key" equal to the channel
-                await database.set(`${interaction.guild.id}.verifyKey`, interaction.options.getString("key"));
+                //Set "chatChannel" equal to the channel
+                await database.set(`${interaction.guild.id}.gatekeeperChannel`, interaction.options.getChannel("gatekeeper").id);
 
                 //Log end result
-                interaction.editReply({
-                    content: `Set the server's verification key to \`${await database.get(`${interaction.guild.id}.verifyKey`)}\`.`
+                await interaction.editReply({
+                    content: `Set the chat logging channel to <#${await database.get(`${interaction.guild.id}.gatekeeperChannel`)}>.`
                 });
 
                 break;
 
-            case "member-role":
-
-                //Set "member-role" equal to the channel
-                await database.set(`${interaction.guild.id}.memberRole`, interaction.options.getRole("role").id);
-
-                //Log end result
-                interaction.editReply({
-                    content: `Set the server's member role to \`${await database.get(`${interaction.guild.id}.memberRole`)}\`.`
-                });
-
-                break;
         }
     }
 }
