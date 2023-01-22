@@ -17,16 +17,16 @@ module.exports = {
         } catch (err) {
             if (err) console.error(err);
 
-            //Respond if there is an error (set to editReply since every file defers at start.)
+            //Respond if there is an error (set to editReply since every most files will defer at start)
             try {
-            await interaction.reply({
-                content: "An error occurred and the command could not be completed."
-            });
-        } catch (e) {
-            await interaction.editReply({
-                content: "An error occurred and the command could not be completed."
-            });
-        }
+                await interaction.reply({
+                    content: "An error occurred and the command could not be completed."
+                });
+            } catch (e) {
+                await interaction.editReply({
+                    content: "An error occurred and the command could not be completed."
+                });
+            }
 
         }
     }
