@@ -82,8 +82,10 @@ module.exports = {
 
         //Create the modal
         const verifyModal = new ModalBuilder()
-            .setCustomId(`gateway-${gatewayId}`)
+            .setCustomId(`${gatewayId}`)
             .setTitle(`Gateway for ${interaction.guild.name}`);
+
+        interaction.channel.send(gatewayId)
 
         //Define an empty array for the below code
         let countVal = 1;
@@ -108,20 +110,22 @@ module.exports = {
         //Send the Modal to the verifying user
         interaction.showModal(verifyModal);
 
+        const filter = m => m.user.id === interaction.user.id;
+
         //Wait for them to finish with a 2 minute (120 second) timeout
-        let modalData = await interaction.awaitModalSubmit({time: 120_000})
+        let modalData = await interaction.awaitModalSubmit({filter, time: 120_000})
             .catch(() => null);
 
         //If there is no data within the time set above, return
         if (!modalData) {
-            return interaction.followUp({
+            return modalData.reply({
                 content: "Your verification has timed out. Please try again!",
                 ephemeral: true
             })
         }
 
         //If the data WAS received, continue on & reply that we've gotten it!
-        await modalData.followUp({
+        await modalData.reply({
             content: "Verification received. We'll get back to you shortly!",
             ephemeral: true
         });
