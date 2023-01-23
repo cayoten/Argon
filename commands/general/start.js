@@ -108,6 +108,7 @@ module.exports = {
         //Send the Modal to the verifying user
         interaction.showModal(verifyModal);
 
+        //Add filter for Modal submission to prevent logging others' messages (Learned this one the hard way!)
         const filter = m => m.user.id === interaction.user.id;
 
         //Wait for them to finish with a 2 minute (120 second) timeout
@@ -116,10 +117,8 @@ module.exports = {
 
         //If there is no data within the time set above, return
         if (!modalData) {
-            return modalData.reply({
-                content: "Your verification has timed out. Please try again!",
-                ephemeral: true
-            })
+            return interaction.channel.send(`Your verification has timed out, ${interaction.user}. Please try again!`)
+                .then(m => setTimeout(() => m.delete(), 5000));
         }
 
         //If the data WAS received, continue on & reply that we've gotten it!
