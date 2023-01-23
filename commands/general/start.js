@@ -85,8 +85,6 @@ module.exports = {
             .setCustomId(`${gatewayId}`)
             .setTitle(`Gateway for ${interaction.guild.name}`);
 
-        interaction.channel.send(gatewayId)
-
         //Define an empty array for the below code
         let countVal = 1;
 
