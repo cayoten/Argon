@@ -89,7 +89,7 @@ module.exports = {
         });
 
         //Finally, reply that we're done!
-        interaction.editReply({
+        await interaction.editReply({
             content: `Action \`ban user\` successfully performed on ${interaction.options.getUser("user")}.`
         });
     }

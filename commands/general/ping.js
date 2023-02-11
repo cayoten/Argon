@@ -12,7 +12,7 @@ module.exports = {
             ephemeral: true});
 
         //Reply to the user
-        interaction.editReply({
+        await interaction.editReply({
             content: `Ping?`,
         })
 

@@ -49,7 +49,7 @@ module.exports = {
         await chatChannel.send({content: `:broom: **${interaction.user.tag}** has performed action: \`chat clear\`\n\`Cleared:\` **${deletedMessages.size}** messages.`});
 
         //Finally, respond!
-        interaction.editReply({
+        await interaction.editReply({
             content: `Action \`clear chat [size ${deletedMessages.size}]\` applied successfully.`
         })
     }

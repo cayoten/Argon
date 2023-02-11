@@ -69,7 +69,7 @@ module.exports = {
         }
 
         //Wrap up to mod that they were given a strike
-        interaction.editReply({
+        await interaction.editReply({
             content: `User ${interaction.options.getUser("user")} successfully struck with reason \`${interaction.options.getString("reason")}\``
         });
 

@@ -71,7 +71,7 @@ module.exports = {
         await modChannel.send({content: `:coffee: **${interaction.user.tag}** has performed action: \`nullify\` \n\`New Strike Count:\` **${modifiedStrikes.length}**`});
 
         //Finally, we're done!
-        interaction.editReply({
+        await interaction.editReply({
             content: `Action completed with value \`${interaction.options.getInteger("value")}\` on user ${interaction.options.getUser("user")}`
         })
 

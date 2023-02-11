@@ -22,7 +22,7 @@ module.exports = {
             content: interaction.options.getString("message")
         })
 
-        interaction.editReply({
+        await interaction.editReply({
             content: "Your wish is my command."
         })
     }

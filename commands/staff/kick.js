@@ -69,7 +69,7 @@ module.exports = {
         });
 
         //Finally, reply that we're done!
-        interaction.editReply({
+        await interaction.editReply({
             content: `Action \`kick user\` successfully performed on ${interaction.options.getUser("user")}.`
         });
     }

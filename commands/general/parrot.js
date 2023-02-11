@@ -17,7 +17,7 @@ module.exports = {
             ephemeral: true});
 
         //Reply with what the user said
-        interaction.editReply({
+        await interaction.editReply({
             content: "*I repeat back to you:* " + interaction.options.getString("message")
         })
     }

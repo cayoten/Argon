@@ -68,7 +68,7 @@ module.exports = {
         await interaction.options.getMember("user").timeout(ms(interaction.options.getString("time")), reason)
 
         //Finally, reply that we're done!
-        interaction.editReply({
+        await interaction.editReply({
             content: `Action \`silence user\` successfully performed on ${interaction.options.getUser("user")}.`
         });
 
