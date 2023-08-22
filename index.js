@@ -3,8 +3,6 @@ const fs = require("fs");
 
 const {Client, GatewayIntentBits, Collection} = require("discord.js");
 
-//TODO: Eventually replace all instances of .tag with .username (CTRL+Shift+R on WebStorm) ((don't be a shitass))
-
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
