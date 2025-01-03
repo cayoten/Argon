@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
+const {SlashCommandBuilder, PermissionsBitField, MessageFlags} = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,7 +15,7 @@ module.exports = {
 
         //At the start, we defer to prevent Discord Interaction Failed - Ephemeral since editReply cannot be changed to ephemeral
         await interaction.deferReply({
-            ephemeral: true});
+            flags: MessageFlags.Ephemeral});
 
         //Reply with what the user said
         interaction.channel.send({

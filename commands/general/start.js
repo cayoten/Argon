@@ -7,7 +7,9 @@ const {
     ButtonStyle,
     TextInputStyle,
     ModalBuilder,
-    TextInputBuilder, PermissionsBitField
+    MessageFlags,
+    TextInputBuilder,
+    PermissionsBitField
 } = require("discord.js");
 
 module.exports = {
@@ -26,7 +28,7 @@ module.exports = {
         if (memberRole == null) {
             return interaction.reply({
                 content: "There isn't a member role set. Alert a staff about this!",
-                ephemeral: true
+                flags: MessageFlags.Ephemeral
             });
         }
 

@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
+const {SlashCommandBuilder, PermissionsBitField, MessageFlags} = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -15,8 +15,7 @@ module.exports = {
         
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            ephemeral: true
-        });
+            flags: MessageFlags.Ephemeral});
 
         //Identify pinned messages
         const pinned = (await interaction.channel.messages.fetch()).filter(msg => !msg.pinned);

@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require("discord.js");
+const {SlashCommandBuilder, MessageFlags} = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,8 +14,7 @@ module.exports = {
 
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            ephemeral: true});
-
+            flags: MessageFlags.Ephemeral});
         //Reply with what the user said
         await interaction.editReply({
             content: "*I repeat back to you:* " + interaction.options.getString("message")

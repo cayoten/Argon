@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
+const {SlashCommandBuilder, PermissionsBitField, MessageFlags} = require("discord.js");
 
 module.exports = {
 
@@ -16,8 +16,7 @@ module.exports = {
 
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            ephemeral: true
-        });
+            flags: MessageFlags.Ephemeral});
 
         //Set up modChannel
         let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));

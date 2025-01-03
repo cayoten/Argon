@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
+const {SlashCommandBuilder, PermissionsBitField, MessageFlags} = require("discord.js");
 // const GuildSettings = require("../../models/GuildSettings");
 
 module.exports = {
@@ -33,8 +33,7 @@ module.exports = {
 
         // At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            ephemeral: true
-        });
+            flags: MessageFlags.Ephemeral});
 
         // Define action as subcommands
         const action = interaction.options.getSubcommand();

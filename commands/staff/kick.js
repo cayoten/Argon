@@ -1,4 +1,4 @@
-const {SlashCommandBuilder, PermissionsBitField} = require("discord.js");
+const {SlashCommandBuilder, PermissionsBitField, MessageFlags} = require("discord.js");
 
 module.exports = {
 
@@ -22,8 +22,7 @@ module.exports = {
 
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            ephemeral: true
-        });
+            flags: MessageFlags.Ephemeral});
 
         //Wrap in a try since we may be using a snowflake of someone not in the server
         try {

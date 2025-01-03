@@ -1,7 +1,7 @@
 {
   "name": "argon",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "A moderation and management bot made by Cayoten. https://www.github.com/cayoten/Argon/",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

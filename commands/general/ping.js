@@ -9,7 +9,7 @@ module.exports = {
 
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            ephemeral: true});
+            flags: MessageFlags.Ephemeral});
 
         //Reply to the user
         await interaction.editReply({
