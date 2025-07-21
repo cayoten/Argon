@@ -1,4 +1,4 @@
-FROM node:alpine3.20.3
+FROM node:alpine3.21
 
 # Set the working directory
 WORKDIR /argon
