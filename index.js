@@ -17,7 +17,7 @@ const client = new Client({
 const {QuickDB} = require("quick.db");
 global.database = new QuickDB();
 
-//Create empty command collection
+//Create an empty command collection
 client.commands = new Collection();
 
 //Command Handler
@@ -42,7 +42,7 @@ for (const file of eventFiles) {
 
     if (event.once) { // If you only run once
         client.once(event.name, (...args) => event.execute(...args, client));
-    } else { // If it isn't ran only once
+    } else { // If it isn't run only once
         client.on(event.name, (...args) => event.execute(...args, client));
     }
 }
@@ -62,4 +62,4 @@ process.on(`unhandledRejection`, err => {
 });
 
 //Finally, login
-client.login(process.env.TOKEN);
+client.login(process.env.TOKEN).then(() => console.log("Discord Client logged in."));
