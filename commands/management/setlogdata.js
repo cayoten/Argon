@@ -55,10 +55,14 @@ module.exports = {
 
         //At the start, we defer to prevent Discord Interaction Failed
         await interaction.deferReply({
-            flags: MessageFlags.Ephemeral});
+            flags: MessageFlags.Ephemeral
+        });
 
         //Define action as subcommands
         const action = interaction.options.getSubcommand();
+
+        // define a value for the end
+        let caseName = ""
 
         //Define actions using a switch case
         switch (action) {
@@ -66,6 +70,8 @@ module.exports = {
 
             //If action is 'moderation'
             case "moderation":
+
+                caseName = "moderation";
 
                 //Set "jlChannel" equal to the channel
                 await database.set(`${interaction.guild.id}.modChannel`, interaction.options.getChannel("moderation").id);
@@ -80,6 +86,8 @@ module.exports = {
             //If action is 'welcome'
             case "join-leave":
 
+                caseName = "join-leave";
+
                 //Set "jlChannel" equal to the channel
                 await database.set(`${interaction.guild.id}.jlChannel`, interaction.options.getChannel("join-leave").id);
 
@@ -91,6 +99,8 @@ module.exports = {
                 break;
 
             case "chat":
+
+                caseName = "chat";
 
                 //Set "chatChannel" equal to the channel
                 await database.set(`${interaction.guild.id}.chatChannel`, interaction.options.getChannel("chat").id);
@@ -104,6 +114,8 @@ module.exports = {
 
             case "gatekeeper":
 
+                caseName = "gatekeeper";
+
                 //Set "chatChannel" equal to the channel
                 await database.set(`${interaction.guild.id}.gatekeeperChannel`, interaction.options.getChannel("gatekeeper").id);
 
@@ -114,6 +126,24 @@ module.exports = {
 
                 break;
 
+        }
+
+        //Set up the guild & channel, defined in setChannel but down here due to possible loop
+        let modChannel = interaction.guild.channels.cache.get(await database.get(`${interaction.guild.id}.modChannel`));
+
+        //No mod channel?? 😢
+        if (modChannel == null) {
+
+            return interaction.editReply({
+                content: "Missing channel data. Set one up with `/setlogdata`!"
+            });
+
+        }
+
+        try {
+            await modChannel.send(`:notebook: **${interaction.user.tag}** has performed action: \`set log\`\n\`Affected Type:\` **${caseName}**\n\`New location:\` ${interaction.options.getChannel("moderation")} *${interaction.options.getChannel("moderation").id}}`)
+        } catch (err) {
+            await interaction.editReply(`This action needs to be logged - please set a mod-logs channel with \`/setlog mod-logs.\``)
         }
     }
 }
