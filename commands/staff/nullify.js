@@ -34,10 +34,10 @@ module.exports = {
         //Define user
         let user = interaction.options.getUser("user")
 
-        //Set strikes equal to the punishments database
+        //Set strikes equal to the punishment database
         const strikes = await database.get(`${interaction.guild.id}_${user.id}_punishments`) || [];
 
-        //If there isn't any strikes, return
+        //If there aren't any strikes, return
         if (strikes.length === 0) {
             return interaction.editReply({
                 content: "This user has a clean slate."
